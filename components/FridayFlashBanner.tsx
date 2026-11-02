@@ -25,90 +25,101 @@ export default function FridayFlashBanner() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Content reveal
+      // Content reveal with power4 ease
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current.children,
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 35 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.75,
-            stagger: 0.08,
-            ease: "power2.out",
+            duration: 0.85,
+            stagger: 0.1,
+            ease: "power4.out",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: bannerRef.current,
-              start: "top 88%",
+              start: "top 86%",
               once: true,
             },
           }
         );
       }
 
-      // Continuous organic multi-axis floating on wing graphics
-      if (leftWingRef.current) {
-        gsap.to(leftWingRef.current, {
-          y: "+=20",
-          rotation: "+=2.5",
-          duration: 4.5,
+      // 1. Organic Idle Floating Wobble (applied to INNER refs to prevent matrix collision)
+      const leftInner = bannerRef.current?.querySelector(".left-wing-inner");
+      const topInner = bannerRef.current?.querySelector(".top-wing-inner");
+      const rightInner = bannerRef.current?.querySelector(".right-wing-inner");
+
+      if (leftInner) {
+        gsap.to(leftInner, {
+          y: "+=18",
+          rotation: 3,
+          duration: 3.8,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
         });
+      }
 
+      if (topInner) {
+        gsap.to(topInner, {
+          y: "+=14",
+          x: "-=8",
+          rotation: -4,
+          duration: 4.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.3,
+        });
+      }
+
+      if (rightInner) {
+        gsap.to(rightInner, {
+          y: "+=20",
+          rotation: 3.5,
+          duration: 4.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 0.6,
+        });
+      }
+
+      // 2. Smooth Scroll Parallax (applied to OUTER refs)
+      if (leftWingRef.current) {
         gsap.to(leftWingRef.current, {
-          y: -60,
+          y: -50,
           scrollTrigger: {
             trigger: bannerRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 1.0,
           },
         });
       }
 
       if (topWingRef.current) {
         gsap.to(topWingRef.current, {
-          y: "+=16",
-          x: "-=10",
-          rotation: "-=3",
-          duration: 5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 0.4,
-        });
-
-        gsap.to(topWingRef.current, {
-          y: -40,
+          y: -35,
           scrollTrigger: {
             trigger: bannerRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5,
+            scrub: 1.2,
           },
         });
       }
 
       if (rightWingRef.current) {
         gsap.to(rightWingRef.current, {
-          y: "+=22",
-          rotation: "+=3",
-          duration: 4.8,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 0.7,
-        });
-
-        gsap.to(rightWingRef.current, {
-          y: -70,
+          y: -60,
           scrollTrigger: {
             trigger: bannerRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.2,
+            scrub: 1.0,
           },
         });
       }
@@ -123,44 +134,50 @@ export default function FridayFlashBanner() {
       onClick={handleBannerClick}
       className="relative w-full bg-[#5E0E0D] py-[80px] sm:py-[98px] overflow-hidden text-center text-white cursor-pointer select-none group transition-colors duration-300 hover:bg-[#681110]"
     >
-      {/* Decorative Wing Graphics (Figma: #6608:481, #6608:483, #6608:485) */}
+      {/* Decorative Wing Graphics with separated parallax & floating containers */}
       <div
         ref={leftWingRef}
-        className="absolute left-[-160px] sm:left-[-204px] top-1/2 -translate-y-1/2 w-[450px] sm:w-[617px] h-[450px] sm:h-[617px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100"
+        className="absolute left-[-160px] sm:left-[-204px] top-1/2 -translate-y-1/2 w-[450px] sm:w-[617px] h-[450px] sm:h-[617px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100 will-change-transform"
       >
-        <Image
-          src="/figma/friday-flash-left.png"
-          alt="Friday Flash Wing Left"
-          fill
-          sizes="(max-width: 768px) 450px, 617px"
-          className="object-contain"
-        />
+        <div className="left-wing-inner relative w-full h-full will-change-transform">
+          <Image
+            src="/figma/friday-flash-left.png"
+            alt="Friday Flash Wing Left"
+            fill
+            sizes="(max-width: 768px) 450px, 617px"
+            className="object-contain"
+          />
+        </div>
       </div>
 
       <div
         ref={topWingRef}
-        className="absolute right-[-40px] sm:right-[-80px] top-[-80px] sm:top-[-125px] w-[220px] sm:w-[310px] h-[240px] sm:h-[329px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100"
+        className="absolute right-[-40px] sm:right-[-80px] top-[-80px] sm:top-[-125px] w-[220px] sm:w-[310px] h-[240px] sm:h-[329px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100 will-change-transform"
       >
-        <Image
-          src="/figma/friday-flash-top-right.png"
-          alt="Friday Flash Wing Top Right"
-          fill
-          sizes="(max-width: 768px) 220px, 310px"
-          className="object-contain"
-        />
+        <div className="top-wing-inner relative w-full h-full will-change-transform">
+          <Image
+            src="/figma/friday-flash-top-right.png"
+            alt="Friday Flash Wing Top Right"
+            fill
+            sizes="(max-width: 768px) 220px, 310px"
+            className="object-contain"
+          />
+        </div>
       </div>
 
       <div
         ref={rightWingRef}
-        className="absolute right-[-40px] sm:right-[-50px] bottom-[-30px] sm:bottom-[-40px] w-[350px] sm:w-[495px] h-[250px] sm:h-[356px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100"
+        className="absolute right-[-40px] sm:right-[-50px] bottom-[-30px] sm:bottom-[-40px] w-[350px] sm:w-[495px] h-[250px] sm:h-[356px] pointer-events-none select-none z-0 opacity-80 sm:opacity-100 will-change-transform"
       >
-        <Image
-          src="/figma/friday-flash-right.png"
-          alt="Friday Flash Wing Right"
-          fill
-          sizes="(max-width: 768px) 350px, 495px"
-          className="object-contain"
-        />
+        <div className="right-wing-inner relative w-full h-full will-change-transform">
+          <Image
+            src="/figma/friday-flash-right.png"
+            alt="Friday Flash Wing Right"
+            fill
+            sizes="(max-width: 768px) 350px, 495px"
+            className="object-contain"
+          />
+        </div>
       </div>
 
       {/* Main Banner Content: #6608:474 (gap 12px) */}

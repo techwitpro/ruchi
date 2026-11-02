@@ -56,42 +56,54 @@ export default function StepsSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header reveal
+      // Header timeline with spring pop & power4 slide
       if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current.children,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power2.out",
-            clearProps: "opacity,transform",
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: "top 88%",
-              once: true,
-            },
-          }
-        );
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 86%",
+            once: true,
+          },
+        });
+
+        const badge = headerRef.current.querySelector(".steps-badge");
+        const title = headerRef.current.querySelector("h2");
+        const subtitle = headerRef.current.querySelector("p");
+
+        if (badge) {
+          tl.fromTo(
+            badge,
+            { opacity: 0, scale: 0.75, y: -15 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(2)", clearProps: "opacity,transform" }
+          );
+        }
+
+        if (title && subtitle) {
+          tl.fromTo(
+            [title, subtitle],
+            { opacity: 0, y: 35 },
+            { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power4.out", clearProps: "opacity,transform" },
+            "-=0.4"
+          );
+        }
       }
 
-      // Step cards staggered reveal - no low opacity lag
+      // Step cards staggered domino reveal
       if (cardsRef.current) {
         gsap.fromTo(
           cardsRef.current.children,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 55, scale: 0.94 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.75,
-            stagger: 0.08,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.85,
+            stagger: 0.12,
+            ease: "back.out(1.25)",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: cardsRef.current,
-              start: "top 88%",
+              start: "top 85%",
               once: true,
             },
           }
@@ -114,7 +126,7 @@ export default function StepsSection() {
           className="flex flex-col items-center text-center gap-[10px] mb-[42px] max-w-[700px]"
         >
           {/* Badge: #6599:13783 (63x32 border #FD7E3B 1px, 50px radius, padding 6px 12px) */}
-          <div className="w-[63px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center shadow-sm">
+          <div className="steps-badge w-[63px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center">
             <span className="font-sans font-normal text-[14px] leading-[20px] text-[#FD7E3B]">
               Steps
             </span>
@@ -176,10 +188,10 @@ function InteractiveStepCard({ step }: { step: StepData }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        transition: "transform 0.25s ease-out, box-shadow 0.3s ease",
+        transition: "transform 0.25s ease-out",
         transformStyle: "preserve-3d",
       }}
-      className={`relative h-[480px] sm:h-[551px] ${step.widthStyle} shrink-0 rounded-[28px] overflow-hidden shadow-lg flex flex-col justify-end p-[24px] sm:p-[30px] group select-none hover:shadow-2xl`}
+      className={`relative h-[480px] sm:h-[551px] ${step.widthStyle} shrink-0 rounded-[28px] overflow-hidden flex flex-col justify-end p-[24px] sm:p-[30px] group select-none`}
     >
       {/* Background Image with Figma Gradient */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -202,7 +214,7 @@ function InteractiveStepCard({ step }: { step: StepData }) {
       {/* Bottom Content: EL-3f67675d (width 300px, gap 8px) */}
       <div className="relative z-10 flex flex-col gap-[8px] w-full max-w-[300px]">
         {/* Phase Pill: EL-6a1c370f (padding 4px 25px, fill #FFFFFF, borderRadius 37px) */}
-        <div className="self-start inline-flex items-center justify-center px-[25px] py-[4px] rounded-[37px] bg-white shadow-sm group-hover:scale-105 transition-transform duration-200">
+        <div className="self-start inline-flex items-center justify-center px-[25px] py-[4px] rounded-[37px] bg-white group-hover:scale-105 transition-transform duration-200">
           <span className="font-phudu font-medium text-[16px] text-[#4D0711]">
             {step.phase}
           </span>

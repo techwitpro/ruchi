@@ -46,18 +46,27 @@ export default function CartDrawer() {
     }, 1500);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Backdrop */}
+    <div
+      className={`fixed inset-0 z-50 flex justify-end transition-all duration-400 ${
+        isOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+      }`}
+      aria-hidden={!isOpen}
+    >
+      {/* Backdrop with smooth fade transition */}
       <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-400 ease-out ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
         onClick={closeCart}
       />
 
-      {/* Drawer */}
-      <div className="relative w-full max-w-md bg-[#4D0711] text-[#FEFEF6] h-full shadow-2xl flex flex-col z-10 border-l border-[#FEFEF6]/15">
+      {/* Drawer with smooth slide-in/out transition */}
+      <div
+        className={`relative w-full max-w-md bg-[#4D0711] text-[#FEFEF6] h-full flex flex-col z-10 border-l border-[#FEFEF6]/15 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {/* Header */}
         <div className="p-6 border-b border-[#FEFEF6]/15 flex items-center justify-between bg-[#37050C]">
           <div className="flex items-center gap-3">
@@ -73,7 +82,7 @@ export default function CartDrawer() {
           </div>
           <button
             onClick={closeCart}
-            className="p-2 rounded-full hover:bg-white/10 transition-colors text-[#FEFEF6]/80 hover:text-white"
+            className="p-2 rounded-full hover:bg-white/10 transition-all duration-200 text-[#FEFEF6]/80 hover:text-white hover:rotate-90"
             aria-label="Close cart"
           >
             <X className="w-5 h-5" />
@@ -246,14 +255,14 @@ export default function CartDrawer() {
                 <button
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
-                  className="w-full py-3.5 rounded-xl bg-[#FD7E3B] text-white font-phudu font-bold text-base flex items-center justify-center gap-2 hover:bg-[#e66a27] active:scale-[0.99] transition-all disabled:opacity-70 shadow-lg shadow-[#FD7E3B]/20"
+                  className="w-full py-3.5 rounded-xl bg-[#FD7E3B] text-white font-phudu font-bold text-base flex items-center justify-center gap-2 hover:bg-[#e66a27] hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 disabled:opacity-70 cursor-pointer select-none"
                 >
                   {isCheckingOut ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <>
                       <span>Checkout &bull; ${total.toFixed(2)}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}
                 </button>

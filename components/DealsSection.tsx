@@ -94,42 +94,54 @@ export default function DealsSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Clean header reveal
+      // Header timeline with spring badge pop & power4 slide
       if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current.children,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power2.out",
-            clearProps: "opacity,transform",
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: "top 88%",
-              once: true,
-            },
-          }
-        );
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 86%",
+            once: true,
+          },
+        });
+
+        const badge = headerRef.current.querySelector(".deals-badge");
+        const title = headerRef.current.querySelector("h2");
+        const subtitle = headerRef.current.querySelector("p");
+
+        if (badge) {
+          tl.fromTo(
+            badge,
+            { opacity: 0, scale: 0.75, y: -15 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(2)", clearProps: "opacity,transform" }
+          );
+        }
+
+        if (title && subtitle) {
+          tl.fromTo(
+            [title, subtitle],
+            { opacity: 0, y: 35 },
+            { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power4.out", clearProps: "opacity,transform" },
+            "-=0.4"
+          );
+        }
       }
 
-      // Combo cards entrance - only animates opacity and y, NEVER touches colors or scale
+      // Combo cards entrance - tactile spring domino settle, preserving static background colors
       if (gridRef.current) {
         gsap.fromTo(
           gridRef.current.children,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 55, scale: 0.95 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.75,
-            stagger: 0.08,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.85,
+            stagger: 0.1,
+            ease: "back.out(1.2)",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: gridRef.current,
-              start: "top 88%",
+              start: "top 85%",
               once: true,
             },
           }
@@ -174,8 +186,8 @@ export default function DealsSection() {
           ref={headerRef}
           className="flex flex-col items-center text-center gap-[10px] mb-[42px] max-w-[700px]"
         >
-          {/* Badge: #6599:13880 (78x32 border #FD7E3B 1px, 50px radius, padding 6px 12px) */}
-          <div className="w-[78px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center shadow-sm">
+          {/* Badge: #6599:13880 (78x32 border #FD7E3B 1px, 50px radius, padding 6px 12px, no shadow) */}
+          <div className="deals-badge w-[78px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center">
             <span className="font-sans font-normal text-[14px] leading-[20px] text-[#FD7E3B]">
               Offers
             </span>
@@ -250,13 +262,13 @@ function InteractiveComboCard({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        transition: "transform 0.25s ease-out, box-shadow 0.25s ease",
+        transition: "transform 0.25s ease-out",
         transformStyle: "preserve-3d",
       }}
-      className={`w-full min-h-[378px] rounded-[28px] p-[20px] sm:p-[28px] xl:p-[35px] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md hover:shadow-xl select-none ${combo.bgClass}`}
+      className={`w-full min-h-[378px] rounded-[28px] p-[20px] sm:p-[28px] xl:p-[35px] flex flex-col sm:flex-row items-center justify-between gap-6 select-none ${combo.bgClass}`}
     >
-      {/* Left: Food Image in white frame (borderRadius 16px, 8px white stroke) */}
-      <div className="relative w-[210px] sm:w-[240px] md:w-[260px] xl:w-[294px] h-[210px] sm:h-[240px] md:h-[260px] xl:h-[294px] shrink-0 rounded-[16px] overflow-hidden bg-white border-[6px] sm:border-[8px] border-white shadow-md flex items-center justify-center">
+      {/* Left: Food Image in white frame (borderRadius 16px, 8px white stroke, Figma shadow 4px 10px 8px 0px rgba(0,0,0,0.08)) */}
+      <div className="relative w-[210px] sm:w-[240px] md:w-[260px] xl:w-[294px] h-[210px] sm:h-[240px] md:h-[260px] xl:h-[294px] shrink-0 rounded-[16px] overflow-hidden bg-white border-[6px] sm:border-[8px] border-white shadow-[4px_10px_8px_0px_rgba(0,0,0,0.08)] flex items-center justify-center">
         <Image
           src={combo.image}
           alt={combo.name}
@@ -313,13 +325,13 @@ function InteractiveComboCard({
             </span>
           </div>
 
-          {/* "Claim Deal" Button: EL-7ced2ffd (borderRadius 12px, fill #4D0711, border 1px #FEFEF6) */}
+          {/* "Claim Deal" Button: EL-7ced2ffd (borderRadius 12px, fill #4D0711, border 1px #FEFEF6, no shadow) */}
           <button
             onClick={(e) => onClaim(e.currentTarget)}
-            className={`py-[8px] sm:py-[10px] rounded-[12px] border font-phudu font-medium text-[17px] sm:text-[19px] leading-normal flex items-center justify-center gap-1.5 transition-all duration-200 text-center cursor-pointer shadow-sm select-none w-full ${
+            className={`py-[8px] sm:py-[10px] rounded-[12px] border font-phudu font-medium text-[17px] sm:text-[19px] leading-normal flex items-center justify-center gap-1.5 transition-all duration-200 text-center cursor-pointer select-none w-full ${
               isClaimed
-                ? "bg-[#4D0711] border-[#4D0711] text-[#FEFEF6] shadow-md"
-                : "bg-[#4D0711] border-[#FEFEF6] text-[#FEFEF6] hover:bg-[#37050C] hover:shadow-md"
+                ? "bg-[#4D0711] border-[#4D0711] text-[#FEFEF6]"
+                : "bg-[#4D0711] border-[#FEFEF6] text-[#FEFEF6] hover:bg-[#37050C]"
             }`}
           >
             {isClaimed ? (

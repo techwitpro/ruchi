@@ -23,8 +23,6 @@ export default function CateringModal({
   const [dietary, setDietary] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
-  if (!isOpen) return null;
-
   const dietaryOptions = ["Halal", "Vegetarian", "Gluten-Free", "Nut-Free"];
 
   const toggleDietary = (opt: string) => {
@@ -53,19 +51,30 @@ export default function CateringModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+        isOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+      }`}
+      aria-hidden={!isOpen}
+    >
+      {/* Backdrop with smooth fade transition */}
       <div
-        className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+        className={`fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="relative w-full max-w-lg bg-[#4D0711] text-[#FEFEF6] rounded-[28px] border border-[#FEFEF6]/20 shadow-2xl p-6 sm:p-8 z-10 overflow-hidden">
+      {/* Modal with scale & fade transition */}
+      <div
+        className={`relative w-full max-w-lg bg-[#4D0711] text-[#FEFEF6] rounded-[28px] border border-[#FEFEF6]/20 p-6 sm:p-8 z-10 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-3"
+        }`}
+      >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full hover:bg-white/10 text-[#FEFEF6]/70 hover:text-white transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-full hover:bg-white/10 text-[#FEFEF6]/70 hover:text-white hover:rotate-90 transition-all duration-200"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -199,7 +208,7 @@ export default function CateringModal({
                 </div>
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-xl bg-[#FD7E3B] hover:bg-[#e66a27] font-phudu font-bold text-sm text-white transition-all active:scale-95 shadow-md shadow-[#FD7E3B]/20"
+                  className="px-6 py-3 rounded-xl bg-[#FD7E3B] hover:bg-[#e66a27] font-phudu font-bold text-sm text-white transition-all active:scale-95 cursor-pointer"
                 >
                   Book Catering
                 </button>

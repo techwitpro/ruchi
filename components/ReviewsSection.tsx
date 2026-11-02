@@ -56,42 +56,54 @@ export default function ReviewsSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header reveal
+      // Header timeline with spring pop & power4 slide
       if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current.children,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power2.out",
-            clearProps: "opacity,transform",
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: "top 88%",
-              once: true,
-            },
-          }
-        );
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 86%",
+            once: true,
+          },
+        });
+
+        const badge = headerRef.current.querySelector(".reviews-badge");
+        const title = headerRef.current.querySelector("h2");
+        const subtitle = headerRef.current.querySelector("p");
+
+        if (badge) {
+          tl.fromTo(
+            badge,
+            { opacity: 0, scale: 0.75, y: -15 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(2)", clearProps: "opacity,transform" }
+          );
+        }
+
+        if (title && subtitle) {
+          tl.fromTo(
+            [title, subtitle],
+            { opacity: 0, y: 35 },
+            { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power4.out", clearProps: "opacity,transform" },
+            "-=0.4"
+          );
+        }
       }
 
-      // Review cards entrance
+      // Review cards staggered domino entrance with tactile spring settle
       if (cardsRef.current) {
         gsap.fromTo(
           cardsRef.current.children,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 55, scale: 0.94 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.75,
-            stagger: 0.08,
-            ease: "power2.out",
+            scale: 1,
+            duration: 0.85,
+            stagger: 0.1,
+            ease: "back.out(1.25)",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: cardsRef.current,
-              start: "top 88%",
+              start: "top 85%",
               once: true,
             },
           }
@@ -115,7 +127,7 @@ export default function ReviewsSection() {
           className="flex flex-col items-center text-center gap-[10px] mb-[42px] max-w-[700px]"
         >
           {/* Badge: #6599:14286 (83x32 border #FD7E3B 1px, 50px radius, padding 6px 12px) */}
-          <div className="w-[83px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center shadow-sm">
+          <div className="reviews-badge w-[83px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center">
             <span className="font-sans font-normal text-[14px] leading-[20px] text-[#FD7E3B]">
               Voices
             </span>
@@ -177,10 +189,10 @@ function InteractiveReviewCard({ review }: { review: ReviewData }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        transition: "transform 0.25s ease-out, box-shadow 0.3s ease, border-color 0.3s ease",
+        transition: "transform 0.25s ease-out, border-color 0.3s ease",
         transformStyle: "preserve-3d",
       }}
-      className="w-full max-w-[400px] lg:w-[399.98px] rounded-[28px] bg-[#FEFEF6] border border-[rgba(77,7,17,0.2)] p-[26px] sm:p-[30px] flex flex-col justify-between gap-[24px] sm:gap-[28px] shadow-sm hover:shadow-2xl hover:border-[#FD7E3B]/40 select-none group"
+      className="w-full max-w-[400px] lg:w-[399.98px] rounded-[28px] bg-[#FEFEF6] border border-[rgba(77,7,17,0.2)] p-[26px] sm:p-[30px] flex flex-col justify-between gap-[24px] sm:gap-[28px] hover:border-[rgba(77,7,17,0.4)] select-none group"
     >
       <div className="flex flex-col gap-[20px]">
         {/* 5-Star SVG Rating: EL-8f989bf6 (width 98px, height 18px) */}

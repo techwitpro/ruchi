@@ -31,21 +31,21 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Columns reveal
+      // Columns staggered rise
       if (columnsRef.current) {
         gsap.fromTo(
           columnsRef.current.children,
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power2.out",
+            duration: 0.85,
+            stagger: 0.1,
+            ease: "power3.out",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: columnsRef.current,
-              start: "top 88%",
+              start: "top 86%",
               once: true,
             },
           }
@@ -56,16 +56,17 @@ export default function Footer() {
       if (mapRef.current && pinRef.current) {
         gsap.fromTo(
           mapRef.current,
-          { opacity: 0, scale: 0.95 },
+          { opacity: 0, scale: 0.94, y: 30 },
           {
             opacity: 1,
             scale: 1,
-            duration: 0.75,
-            ease: "power2.out",
+            y: 0,
+            duration: 0.85,
+            ease: "power3.out",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: mapRef.current,
-              start: "top 88%",
+              start: "top 86%",
               once: true,
             },
           }
@@ -73,17 +74,18 @@ export default function Footer() {
 
         gsap.fromTo(
           pinRef.current,
-          { opacity: 0, y: -30 },
+          { opacity: 0, y: -50, scale: 0.6 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            ease: "bounce.out",
-            delay: 0.2,
+            scale: 1,
+            duration: 0.85,
+            ease: "back.out(2.5)",
+            delay: 0.25,
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: mapRef.current,
-              start: "top 86%",
+              start: "top 85%",
               once: true,
             },
           }
@@ -94,13 +96,13 @@ export default function Footer() {
       if (brandArtRef.current) {
         gsap.fromTo(
           brandArtRef.current,
-          { opacity: 0, y: 40, scale: 0.96 },
+          { opacity: 0, y: 65, scale: 0.96 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.85,
-            ease: "power2.out",
+            duration: 1.1,
+            ease: "power4.out",
             clearProps: "opacity,transform",
             scrollTrigger: {
               trigger: brandArtRef.current,
@@ -305,7 +307,7 @@ export default function Footer() {
                   </div>
                   <button
                     type="submit"
-                    className="px-[25px] py-[15px] rounded-[8px] bg-[#FD7E3B] text-white font-phudu font-medium text-[20px] leading-normal flex items-center justify-center hover:bg-[#e66a27] active:scale-95 transition-all text-center shrink-0 cursor-pointer shadow-sm"
+                    className="px-[25px] py-[15px] rounded-[8px] bg-[#FD7E3B] text-white font-phudu font-medium text-[20px] leading-normal flex items-center justify-center hover:bg-[#e66a27] active:scale-95 transition-all text-center shrink-0 cursor-pointer"
                   >
                     {joined ? "Joined" : "Join"}
                   </button>
@@ -322,7 +324,7 @@ export default function Footer() {
           {/* Right Block: Map Card #6599:14553 (width 310px, height 391px, borderRadius 12px) */}
           <div
             ref={mapRef}
-            className="w-full max-w-[310px] h-[391px] shrink-0 rounded-[12px] overflow-hidden bg-white relative shadow-xl mx-auto lg:mx-0"
+            className="w-full max-w-[310px] h-[391px] shrink-0 rounded-[12px] overflow-hidden bg-white relative mx-auto lg:mx-0"
           >
             <Image
               src="/figma/footer-map.png"
@@ -339,7 +341,7 @@ export default function Footer() {
                   alt="Map Marker"
                   width={27}
                   height={41}
-                  className="object-contain drop-shadow-md"
+                  className="object-contain"
                 />
               </div>
             </div>

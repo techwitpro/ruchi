@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface HeroProps {
   onSelectCategory?: (category: string) => void;
@@ -18,10 +17,6 @@ export default function Hero({ onSelectCategory }: HeroProps) {
   const title2Ref = useRef<HTMLSpanElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const categories = [
     {
@@ -62,35 +57,12 @@ export default function Hero({ onSelectCategory }: HeroProps) {
     },
   ];
 
-  const checkScroll = useCallback(() => {
-    if (!scrollContainerRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    checkScroll();
-    el.addEventListener("scroll", checkScroll, { passive: true });
-    window.addEventListener("resize", checkScroll);
-    return () => {
-      el.removeEventListener("scroll", checkScroll);
-      window.removeEventListener("resize", checkScroll);
-    };
-  }, [checkScroll]);
-
-  const handleHeroScroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = direction === "left" ? -340 : 340;
-      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
+  // Repeat categories to ensure seamless infinite loop across all viewport widths up to 4K
+  const marqueeItems = [...categories, ...categories];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Clean, elegant entrance timeline on page load - NO scroll animations
+      // Clean entrance timeline on page load - NO scroll animations
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       // Ambient background glow gentle pulse
@@ -105,61 +77,61 @@ export default function Hero({ onSelectCategory }: HeroProps) {
         });
       }
 
-      // Top pill badge: soft float down
+      // Top pill badge: spring pop-in
       if (badgeRef.current) {
         tl.fromTo(
           badgeRef.current,
-          { opacity: 0, scale: 0.94, y: -20 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.8, clearProps: "opacity,transform" },
+          { opacity: 0, scale: 0.75, y: -20 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(2)", clearProps: "opacity,transform" },
           0.05
         );
       }
 
-      // Heading lines: smooth slide up
+      // Heading lines: cinematic smooth slide up with power4 ease
       if (title1Ref.current && title2Ref.current) {
         tl.fromTo(
           [title1Ref.current, title2Ref.current],
-          { opacity: 0, y: 45 },
+          { opacity: 0, y: 55 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
+            duration: 0.95,
             stagger: 0.12,
-            ease: "power3.out",
+            ease: "power4.out",
             clearProps: "opacity,transform",
           },
           0.15
         );
       }
 
-      // CTA buttons: smooth rise
+      // CTA buttons: tactile spring rise
       if (ctaRef.current) {
         tl.fromTo(
           ctaRef.current.children,
-          { opacity: 0, y: 25 },
+          { opacity: 0, scale: 0.88, y: 25 },
           {
             opacity: 1,
+            scale: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.75,
             stagger: 0.1,
-            ease: "power3.out",
+            ease: "back.out(1.8)",
             clearProps: "opacity,transform",
           },
           0.3
         );
       }
 
-      // Category cards: smooth staggered cascade
+      // Category cards marquee: smooth entrance rise & settle
       if (cardsRef.current) {
         tl.fromTo(
-          cardsRef.current.children,
-          { opacity: 0, y: 50, scale: 0.96 },
+          cardsRef.current,
+          { opacity: 0, y: 40, scale: 0.98 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.85,
-            stagger: 0.08,
+            duration: 0.9,
             ease: "power3.out",
             clearProps: "opacity,transform",
           },
@@ -196,10 +168,10 @@ export default function Hero({ onSelectCategory }: HeroProps) {
       <div className="w-full max-w-[1245px] mx-auto px-4 flex flex-col items-center text-center relative z-10">
         {/* Text Container: #6829:247 (gap 23px) */}
         <div className="flex flex-col items-center gap-[23px] w-full">
-          {/* Top Pill Badge: #6829:248 (width 303px, height 32px, border #FD7E3B 1px, 50px radius, padding 6px 18px) */}
+          {/* Top Pill Badge: #6829:248 (width 303px, height 32px, border #FD7E3B 1px, 50px radius, padding 6px 18px, no drop shadow) */}
           <div
             ref={badgeRef}
-            className="w-[303px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center gap-[10px] px-[18px] py-[6px] shrink-0 shadow-sm"
+            className="w-[303px] h-[32px] rounded-[50px] border border-[#FD7E3B] flex items-center justify-center gap-[10px] px-[18px] py-[6px] shrink-0"
           >
             <div className="relative w-4 h-4 shrink-0 flex items-center justify-center">
               <Image
@@ -236,7 +208,7 @@ export default function Hero({ onSelectCategory }: HeroProps) {
           {/* Order Today Button: #6829:265 */}
           <Link
             href="#menu"
-            className="inline-flex items-center justify-center gap-[8px] px-[30px] py-[14px] rounded-[12px] bg-[#FD7E3B] text-[#FEFEF6] font-phudu font-semibold text-[20px] leading-normal tracking-[-0.02em] hover:bg-[#e66a27] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#FD7E3B]/25 group"
+            className="inline-flex items-center justify-center gap-[8px] px-[30px] py-[14px] rounded-[12px] bg-[#FD7E3B] text-[#FEFEF6] font-phudu font-semibold text-[20px] leading-normal tracking-[-0.02em] hover:bg-[#e66a27] hover:scale-105 active:scale-95 transition-all group"
           >
             <span>Order Today</span>
             <div className="relative w-6 h-6 shrink-0 flex items-center justify-center group-hover:translate-x-1.5 transition-transform duration-300">
@@ -260,41 +232,31 @@ export default function Hero({ onSelectCategory }: HeroProps) {
         </div>
       </div>
 
-      {/* Hero Category Carousel: Figma #6829:280 */}
-      <div className="relative w-full group/carousel">
-        {/* Navigation arrows for desktop mouse users */}
-        {canScrollLeft && (
-          <button
-            onClick={() => handleHeroScroll("left")}
-            className="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FEEDCF] text-[#4D0711] items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all hover:bg-white"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        )}
-        {canScrollRight && (
-          <button
-            onClick={() => handleHeroScroll("right")}
-            className="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#FEEDCF] text-[#4D0711] items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all hover:bg-white"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        )}
-
-        <div
-          ref={scrollContainerRef}
-          className="w-full overflow-x-auto no-scrollbar pt-6 pb-6 px-4 sm:px-6 md:px-8 scroll-smooth snap-x snap-mandatory"
-        >
-          <div
-            ref={cardsRef}
-            className="flex items-end justify-start 2xl:justify-center gap-[20px] min-w-max"
-          >
-            {categories.map((cat, idx) => (
+      {/* Hero Category Infinite Marquee: Figma #6829:280 */}
+      <div
+        ref={cardsRef}
+        className="relative w-full overflow-hidden pt-4 pb-6 marquee-container"
+      >
+        <div className="animate-hero-marquee flex items-end">
+          {/* Set 1 */}
+          <div className="flex items-end gap-[20px] pr-[20px]">
+            {marqueeItems.map((cat, idx) => (
               <HeroCategoryCard
-                key={cat.id}
+                key={`set1-${cat.id}-${idx}`}
                 category={cat}
                 priority={idx < 3}
+                onClick={() => handleCategoryClick(cat.filterKey)}
+              />
+            ))}
+          </div>
+
+          {/* Set 2 (Identical clone for seamless continuous infinite marquee) */}
+          <div className="flex items-end gap-[20px] pr-[20px]" aria-hidden="true">
+            {marqueeItems.map((cat, idx) => (
+              <HeroCategoryCard
+                key={`set2-${cat.id}-${idx}`}
+                category={cat}
+                priority={false}
                 onClick={() => handleCategoryClick(cat.filterKey)}
               />
             ))}
@@ -306,7 +268,7 @@ export default function Hero({ onSelectCategory }: HeroProps) {
 }
 
 /**
- * Hero Category Card with 3D Hover Depth and Specular Sheen
+ * Hero Category Card: Pure Flat Figma Aesthetic, No Drop Shadows, Smooth Micro-Lift
  */
 function HeroCategoryCard({
   category,
@@ -317,38 +279,10 @@ function HeroCategoryCard({
   priority?: boolean;
   onClick: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || window.innerWidth < 1024) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -5;
-    const rotateY = ((x - centerX) / centerX) * 5;
-
-    cardRef.current.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
-  };
-
-  const handleMouseLeave = () => {
-    if (!cardRef.current) return;
-    cardRef.current.style.transform = `perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
-  };
-
   return (
     <div
-      ref={cardRef}
       onClick={onClick}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transition: "transform 0.3s ease-out, box-shadow 0.3s ease",
-        transformStyle: "preserve-3d",
-      }}
-      className="shrink-0 snap-start w-[285px] sm:w-[303.33px] rounded-[20.26px] bg-[#FEEDCF] p-[12.08px] flex flex-col items-center gap-[6px] shadow-xl hover:shadow-2xl cursor-pointer group select-none relative"
+      className="shrink-0 w-[285px] sm:w-[303.33px] rounded-[20.26px] bg-[#FEEDCF] p-[12.08px] flex flex-col items-center gap-[6px] cursor-pointer group select-none relative transition-transform duration-300 hover:-translate-y-2.5 active:scale-95"
     >
       {/* Inner Photo Box: Figma #6829:282 (height 322px, borderRadius 12.51px, overflow-hidden) */}
       <div className="relative w-full h-[322px] rounded-[12.51px] overflow-hidden bg-[#FEEDCF]">
